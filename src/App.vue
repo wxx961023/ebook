@@ -13,11 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
   html.style.fontSize = fontSize + 'px'
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
+@import "./assets/style/global.scss";
 .text{
   /* font-family: 'Days One'; */
   font-family: 'Days One';
-  font-size: 1rem;
+  font-size: px2rem(30);
   color: red;
 }
 </style>
