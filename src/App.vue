@@ -5,7 +5,18 @@
   </div>
 </template>
 <script>
-export default {}
+import { mapGetters } from 'vuex'
+export default {
+  computed: {
+    ...mapGetters(['test'])
+  },
+  mounted () {
+    // 跳到actions的方法中
+    this.$store.dispatch('setTest', 102).then(res => {
+      console.log('this.$store.state.test', this.test)
+    })
+  }
+}
 document.addEventListener('DOMContentLoaded', () => {
   const html = document.querySelector('html')
   let fontSize = window.innerWidth / 10
