@@ -1,21 +1,11 @@
 <template>
   <div id="app">
     <router-view/>
-    <span class="text">ACC</span>
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 export default {
-  computed: {
-    ...mapGetters(['test'])
-  },
-  mounted () {
-    // 跳到actions的方法中
-    this.$store.dispatch('setTest', 102).then(res => {
-      console.log('this.$store.state.test', this.test)
-    })
-  }
+
 }
 document.addEventListener('DOMContentLoaded', () => {
   const html = document.querySelector('html')
@@ -25,11 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 </script>
 <style lang="scss" scoped>
-@import "./assets/style/global.scss";
-.text{
-  /* font-family: 'Days One'; */
-  font-family: 'Days One';
-  font-size: px2rem(20);
-  color: red;
+#app{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 </style>
