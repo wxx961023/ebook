@@ -13,6 +13,7 @@ module.exports = {
     // 缩进
     'indent': 'off',
     'space-before-function-paren': 'off',
+    'no-multiple-empty-lines': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'
