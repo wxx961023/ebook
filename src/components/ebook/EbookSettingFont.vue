@@ -39,6 +39,9 @@
 
   export default {
     mixins: [ebookMixin],
+    components: {
+      
+    },
     data(){
       return {
         fontSizeList: FONT_SIZE_LIST
@@ -50,7 +53,7 @@
         this.currentBook.rendition.themes.fontSize(fontSize)
       },
       showFontFamilyPopup() {
-        console.log('ok')
+        this.setFontFamilyVisible(true)
       }
     }
   }
