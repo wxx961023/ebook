@@ -13,7 +13,9 @@ module.exports = {
     // 缩进
     'indent': 'off',
     'space-before-function-paren': 'off',
-    'no-multiple-empty-lines': 'off'
+    'no-multiple-empty-lines': 'off',
+    'comma-dangle': 'off',
+    'space-before-blocks': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'

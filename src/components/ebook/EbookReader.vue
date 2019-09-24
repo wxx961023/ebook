@@ -7,6 +7,12 @@
 <script>
   import { ebookMixin } from '../../utils/mixin.js'
   import { mapActions } from 'vuex'
+  import {
+    getFontFamily,
+    saveFontFamily,
+    getFontSize,
+    saveFontSize
+  } from '../../utils/localStorage'
 
   import Epub from 'epubjs'
   global.ePub = Epub
@@ -26,8 +32,29 @@
           height: innerHeight,
           method: 'default'
         })
-        this.rendition.display()
+        this.rendition.display().then(() => {
+          this.initFontSize()
+          this.initFontFamily()
+        })
         this.handleTouch()
+      },
+      initFontSize(){
+        let fontSize = getFontSize(this.fileName)
+        if(!fontSize) {
+          saveFontSize(this.fileName,this.defaultFontSize)
+        }else{
+          this.rendition.themes.fontSize(fontSize)
+          this.setDefaultFontSize(fontSize)
+        }
+      },
+      initFontFamily(){
+        let font = getFontFamily(this.fileName)
+        if(!font){
+          setFontFamily(this.fileName,this.defaultFontFamily)
+        }else{
+          this.rendition.themes.font(font)
+          this.setDefaultFontFamily(font)
+        }
       },
       handleTouch(){
         this.rendition.on('touchstart', event => {
@@ -65,6 +92,7 @@
           this.setSettingVisible(-1)
         }
         this.setMenuVisible(!this.menuVisible)
+        this.setFontFamilyVisible(false)
       },
       hideTitleAndMenu(){
         this.setMenuVisible(false)
