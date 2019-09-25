@@ -88,3 +88,12 @@ export function themeList(vue) {
     }
   ]
 }
+
+export function addCss(href) {
+  const link = document.createElement('link')
+  link.setAttribute('rel', 'stylesheet')
+  link.setAttribute('type', 'text/css')
+  link.setAttribute('href', href)
+  const head = document.getElementsByTagName('head')[0]
+  head.appendChild(link)
+}

@@ -24,26 +24,24 @@
 
 <script>
 import { ebookMixin } from '../../utils/mixin.js'
-import { themeList } from '../../utils/book.js'
+import { saveTheme } from '../../utils/localStorage'
 export default {
   mixins: [ebookMixin],
-  computed: {
-    themeList() {
-      return themeList(this)
-    }
-  },
   data() {
     return {
-    };
+    }
   },
   methods: {
     setTheme(index) {
       const theme = this.themeList[index]
       console.log('theme', theme)
-      this.setDefaultTheme(theme.name)
+      this.setDefaultTheme(theme.name).then(() => {
+        this.currentBook.rendition.themes.select(this.defaultTheme)
+      })
+      saveTheme(this.fileName, this.defaultTheme)
     }
   },
-};
+}
 </script>
 
 <style lang="scss" ref="reference" scoped>

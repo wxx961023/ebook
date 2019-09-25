@@ -15,8 +15,11 @@ module.exports = {
     'space-before-function-paren': 'off',
     'no-multiple-empty-lines': 'off',
     'comma-dangle': 'off',
-    'space-before-blocks': 'off'
-  },
+    'space-before-blocks': 'off',
+    'keyword-spacing': 'off',
+    'space-in-parens': 'off',
+    'comma-spacing': 'off',
+    },
   parserOptions: {
     parser: 'babel-eslint'
   }

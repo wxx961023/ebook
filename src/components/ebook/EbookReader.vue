@@ -6,12 +6,14 @@
 
 <script>
   import { ebookMixin } from '../../utils/mixin.js'
-  import { mapActions } from 'vuex'
+  import { addCss } from '../../utils/book.js'
   import {
     getFontFamily,
     saveFontFamily,
     getFontSize,
-    saveFontSize
+    saveFontSize,
+    getTheme,
+    saveTheme
   } from '../../utils/localStorage'
 
   import Epub from 'epubjs'
@@ -19,9 +21,6 @@
   // History|2017_Book_OneHundredYearsOfChemicalWarfa.epub
   export default {
     mixins: [ebookMixin],
-    computed: {
-
-    },
     methods: {
       initEpub() {
         const url = 'http://localhost:8081/epub/' + this.fileName
@@ -33,10 +32,36 @@
           method: 'default'
         })
         this.rendition.display().then(() => {
+          this.initTheme()
           this.initFontSize()
           this.initFontFamily()
+          this.initGlobalStyle()
+        })
+        this.rendition.hooks.content.register(contents => {
+          Promise.all([
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+          ]).then(() => {
+          })
         })
         this.handleTouch()
+      },
+      initGlobalStyle(){
+        addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+      },
+      initTheme() {
+        let defaultTheme = getTheme(this.fileName)
+        if(!defaultTheme){
+          defaultTheme = this.themeList[0].name
+          this.setDefaultTheme(this.fileName, defaultTheme)
+          saveTheme(this.fileName, defaultTheme)
+        }
+        this.themeList.forEach(theme => {
+          this.rendition.themes.register(theme.name, theme.style)
+        })
+        this.rendition.themes.select(defaultTheme)
       },
       initFontSize(){
         let fontSize = getFontSize(this.fileName)
@@ -50,7 +75,8 @@
       initFontFamily(){
         let font = getFontFamily(this.fileName)
         if(!font){
-          setFontFamily(this.fileName,this.defaultFontFamily)
+          // this.setFontFamily(this.fileName,this.defaultFontFamily)
+          saveFontFamily(this.defaultFontFamily)
         }else{
           this.rendition.themes.font(font)
           this.setDefaultFontFamily(font)
