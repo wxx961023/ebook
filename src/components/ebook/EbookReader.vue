@@ -6,7 +6,6 @@
 
 <script>
   import { ebookMixin } from '../../utils/mixin.js'
-  import { addCss } from '../../utils/book.js'
   import {
     getFontFamily,
     saveFontFamily,
@@ -43,21 +42,19 @@
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+
           ]).then(() => {
           })
         })
         this.handleTouch()
       },
-      initGlobalStyle(){
-        addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
-      },
       initTheme() {
         let defaultTheme = getTheme(this.fileName)
         if(!defaultTheme){
           defaultTheme = this.themeList[0].name
-          this.setDefaultTheme(this.fileName, defaultTheme)
           saveTheme(this.fileName, defaultTheme)
         }
+        this.setDefaultTheme(defaultTheme)
         this.themeList.forEach(theme => {
           this.rendition.themes.register(theme.name, theme.style)
         })

@@ -37,6 +37,7 @@ export default {
       console.log('theme', theme)
       this.setDefaultTheme(theme.name).then(() => {
         this.currentBook.rendition.themes.select(this.defaultTheme)
+        this.initGlobalStyle()
       })
       saveTheme(this.fileName, this.defaultTheme)
     }
