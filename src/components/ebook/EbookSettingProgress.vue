@@ -7,7 +7,7 @@
           <span class="icon-forward"></span>
         </div>
         <div class="progress-wrapper">
-          <div class="progress-icon-wrapper" @click="preSection()">
+          <div class="progress-icon-wrapper" @click="preSection">
             <span class="icon-back"></span>
           </div>
           <input
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="text-wrapper">
-          <span class="progress-section-text"></span>
+          <span class="progress-section-text">{{getSectionName}}</span>
           <span>({{bookAvailable ? progress + '%' : '加载中...'}})</span>
         </div>
       </div>
@@ -38,18 +38,66 @@
 <script>
 import { ebookMixin } from '../../utils/mixin.js'
 export default {
-  name: "",
   mixins: [ ebookMixin ],
   data() {
     return {
     };
   },
-  methods: {
-    onProgressChange(progress) { },
-    onProgressInput(progress) {},
-    preSection() {},
-    nextSection() {}
+  computed: {
+    getSectionName() {
+      if (this.section) {
+        const sectionInfo = this.currentBook.section(this.section)
+        if (sectionInfo && sectionInfo.href ) {
+          return this.currentBook.navigation.get(sectionInfo.href).label
+        }
+      }
+    },
   },
+  methods: {
+    onProgressChange(progress) {
+      this.setProgress(progress).then(() => {
+        this.displayProgress()
+        this.updateProgressBg()
+      })
+    },
+    onProgressInput(progress) {
+      this.setProgress(progress).then(() => {
+        this.updateProgressBg()
+      })
+    },
+    displayProgress(){
+      const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
+      this.display(cfi)
+    },
+    updateProgressBg(){
+      this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
+    },
+    preSection() {
+      if (this.section > 0 && this.bookAvailable) {
+        this.setSection(this.section - 1).then(() => {
+          this.displaySection()
+        })
+
+      }
+    },
+    nextSection() {
+      if(this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
+        this.setSection(this.section + 1).then(() => {
+          this.displaySection()
+        })
+      }
+    },
+    displaySection() {
+      const sectionInfo = this.currentBook.section(this.section)
+        if (sectionInfo && sectionInfo.href) {
+          this.display(sectionInfo.href)
+        }
+    },
+
+  },
+  updated() {
+    this.updateProgressBg()
+  }
 };
 </script>
 
@@ -92,7 +140,7 @@ export default {
         -webkit-appearance: none;
         height: px2rem(2);
         margin: 0 px2rem(10);
-        background: -webkit-linear-gradient(#999, #999) no-repeat, #ddd;
+        // background: -webkit-linear-gradient(#999, #999) no-repeat, #ddd;
         // background-size: 0 100% !important;
         &:focus {
           outline: none;

@@ -20,6 +20,7 @@ module.exports = {
     'space-in-parens': 'off',
     'comma-spacing': 'off',
     'semi': 'off',
+    'arrow-spacing': 'off',
     },
   parserOptions: {
     parser: 'babel-eslint'

@@ -12,7 +12,8 @@
     getFontSize,
     saveFontSize,
     getTheme,
-    saveTheme
+    saveTheme,
+    getLocation
   } from '../../utils/localStorage'
 
   import Epub from 'epubjs'
@@ -25,28 +26,16 @@
         const url = 'http://localhost:8081/epub/' + this.fileName
         this.book = new Epub(url)
         this.setCurrentBook(this.book)
-        this.rendition = this.book.renderTo('read', {
-          width: innerWidth,
-          height: innerHeight,
-          method: 'default'
+        this.initRendition()
+        this.initGesture()
+        this.book.ready.then(() => {
+          return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
         })
-        this.rendition.display().then(() => {
-          this.initTheme()
-          this.initFontSize()
-          this.initFontFamily()
-          this.initGlobalStyle()
+        .then((locations) => {
+          // console.log(locations)
+          this.setBookAvailable(true)
+          this.refreshLocation()
         })
-        this.rendition.hooks.content.register(contents => {
-          Promise.all([
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
-            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
-
-          ]).then(() => {
-          })
-        })
-        this.handleTouch()
       },
       initTheme() {
         let defaultTheme = getTheme(this.fileName)
@@ -79,7 +68,30 @@
           this.setDefaultFontFamily(font)
         }
       },
-      handleTouch(){
+      initRendition() {
+        this.rendition = this.book.renderTo('read', {
+          width: innerWidth,
+          height: innerHeight,
+          method: 'default'
+        })
+        const location = getLocation(this.fileName)
+        this.display(location, ()=>{
+          this.initTheme()
+          this.initFontSize()
+          this.initFontFamily()
+          this.initGlobalStyle()
+        })
+        this.rendition.hooks.content.register(contents => {
+          Promise.all([
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/cabin.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/montserrat.css`),
+            contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/tangerine.css`)
+            ]).then(() => {
+          })
+        })
+      },
+      initGesture(){
         this.rendition.on('touchstart', event => {
           this.touchstartX = event.changedTouches[0].clientX
           this.touchstartTime = event.timeStamp
@@ -100,13 +112,17 @@
       },
       prevPage(){
         if(this.rendition){
-          this.rendition.prev()
+          this.rendition.prev().then(()=> {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
       nextPage(){
         if(this.rendition){
-          this.rendition.next()
+          this.rendition.next().then(()=> {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
