@@ -3,7 +3,7 @@
     <div class="setting-wrapper" v-show="menuVisible && settingVisible === 2">
       <div class="setting-progress">
         <div class="read-time-wrapper">
-          <span class="read-time-text">{{'111'}}</span>
+          <span class="read-time-text">{{getReadTimeText()}}</span>
           <span class="icon-forward"></span>
         </div>
         <div class="progress-wrapper">
@@ -37,6 +37,7 @@
 
 <script>
 import { ebookMixin } from '../../utils/mixin.js'
+import { getReadTime } from '../../utils/localStorage'
 export default {
   mixins: [ ebookMixin ],
   data() {
@@ -93,7 +94,17 @@ export default {
           this.display(sectionInfo.href)
         }
     },
-
+    getReadTimeText() {
+      return this.$t('book.haveRead').replace('$1', this.getReadTimeByMinute())
+    },
+    getReadTimeByMinute() {
+      let readTime = getReadTime(this.fileName)
+      if(!readTime){
+        return 0
+      }else{
+        return Math.ceil(readTime / 60)
+      }
+    }
   },
   updated() {
     this.updateProgressBg()
