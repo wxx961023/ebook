@@ -133,10 +133,7 @@
         this.setMenuVisible(!this.menuVisible)
         this.setFontFamilyVisible(false)
       },
-      hideTitleAndMenu(){
-        this.setMenuVisible(false)
-        this.setSettingVisible(-1)
-      }
+
     },
     mounted () {
       const fileName = this.$route.params.fileName.split('|').join('/')

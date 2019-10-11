@@ -1,7 +1,7 @@
 
 <template>
   <transition name="slide-down">
-    <div class="title-wrapper" v-show="menuVisible">
+    <div class="title-wrapper" v-show="menuVisible ">
       <div class="left">
         <span class="icon-back" @click="back"></span>
       </div>
@@ -42,7 +42,7 @@
     background: white;
     top: 0;
     left: 0;
-    z-index: 999;
+    z-index: 200;
     display: flex;
     width: 100%;
     height: px2rem(48);

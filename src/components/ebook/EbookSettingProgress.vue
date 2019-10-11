@@ -45,13 +45,14 @@ export default {
     };
   },
   computed: {
-    getSectionName() {
+    getSectionName () {
       if (this.section) {
         const sectionInfo = this.currentBook.section(this.section)
         if (sectionInfo && sectionInfo.href ) {
           return this.currentBook.navigation.get(sectionInfo.href).label
         }
       }
+      return ''
     },
   },
   methods: {
