@@ -1,4 +1,4 @@
-import {getReadTime} from './localStorage'
+import { getReadTime } from './localStorage'
 export const FONT_SIZE_LIST = [
   { fontSize: 12 },
   { fontSize: 14 },

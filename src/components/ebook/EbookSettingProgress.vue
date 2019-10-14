@@ -37,7 +37,7 @@
 
 <script>
 import { ebookMixin } from '../../utils/mixin.js'
-import { getReadTime } from '../../utils/localStorage'
+// import { getReadTime } from '../../utils/localStorage'
 import { getReadTimeByMinute } from '../../utils/book.js'
 export default {
   mixins: [ ebookMixin ],
@@ -49,7 +49,7 @@ export default {
     getSectionName () {
       if (this.section) {
         const sectionInfo = this.currentBook.section(this.section)
-        if (sectionInfo && sectionInfo.href ) {
+        if (sectionInfo && sectionInfo.href && this.currentBook && this.currentBook.navigation) {
           return this.currentBook.navigation.get(sectionInfo.href).label
         }
       }
@@ -80,7 +80,6 @@ export default {
         this.setSection(this.section - 1).then(() => {
           this.displaySection()
         })
-
       }
     },
     nextSection() {
@@ -96,19 +95,6 @@ export default {
           this.display(sectionInfo.href)
         }
     },
-    getReadTimeText() {
-      console.log('123')
-      return this.$t('book.haveRead').replace('$1', this.getReadTimeByMinute())
-    },
-    getReadTimeByMinute() {
-      let readTime = getReadTime(this.fileName)
-      console.log('readTime', readTime)
-      if(!readTime){
-        return 0
-      }else{
-        return Math.ceil(readTime / 60)
-      }
-    }
   },
   updated() {
     this.updateProgressBg()

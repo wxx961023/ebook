@@ -23,6 +23,7 @@
     methods: {
       startLoopReadTime() {
         let readTime = getReadTime(this.fileName)
+        console.log('readTime1', readTime)
         if(!readTime) {
           readTime = 0
         }
@@ -34,14 +35,18 @@
         },1000)
       }
     },
-    mounted () {
+    created () {
+      console.log('n');
+    },
+    mounted() {
       this.startLoopReadTime()
     },
-    beforeDestroy () {
+    beforeDestroy() {
+      console.log('这里执行')
       if(this.task) {
         clearInterval(this.task)
       }
-    },
+    }
   }
 </script>
 

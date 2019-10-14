@@ -28,6 +28,7 @@
         this.setCurrentBook(this.book)
         this.initRendition()
         this.initGesture()
+        this.parseBook()
         this.book.ready.then(() => {
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
         })
@@ -35,6 +36,16 @@
           // console.log(locations)
           this.setBookAvailable(true)
           this.refreshLocation()
+        })
+      },
+      parseBook() {
+        this.book.loaded.cover.then(cover => {
+          this.book.archive.createUrl(cover).then(url => {
+            this.setCover(url)
+          })
+        })
+        this.book.loaded.metadata.then(metadata => {
+          this.setMetadata(metadata)
         })
       },
       initTheme() {
@@ -132,8 +143,7 @@
         }
         this.setMenuVisible(!this.menuVisible)
         this.setFontFamilyVisible(false)
-      },
-
+      }
     },
     mounted () {
       const fileName = this.$route.params.fileName.split('|').join('/')

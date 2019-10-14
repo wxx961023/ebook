@@ -97,7 +97,7 @@ export const ebookMixin = {
       this.setSettingVisible(-1)
     },
     getReadTimeText() {
-      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute())
+      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
     },
 
   }
