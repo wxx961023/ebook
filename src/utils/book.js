@@ -124,3 +124,6 @@ export function getReadTimeByMinute(fileName) {
     return Math.ceil(readTime / 60)
   }
 }
+export function flatten(array) {
+  return [].concat(...array.map(item => [].concat(item, ...flatten(item.subitems))))
+}

@@ -15,6 +15,7 @@
     saveTheme,
     getLocation
   } from '../../utils/localStorage'
+  import { flatten } from '../../utils/book.js'
 
   import Epub from 'epubjs'
   global.ePub = Epub
@@ -33,7 +34,6 @@
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
         })
         .then((locations) => {
-          // console.log(locations)
           this.setBookAvailable(true)
           this.refreshLocation()
         })
@@ -46,6 +46,17 @@
         })
         this.book.loaded.metadata.then(metadata => {
           this.setMetadata(metadata)
+        })
+        this.book.loaded.navigation.then(nav => {
+          let navItem = flatten(nav.toc)
+          function find(item, level = 0){
+            return !item.parent ? level : find( navItem.filter( parentItem => parentItem.id === item.parent )[0], ++level)
+          }
+          navItem.forEach(item => {
+            item.level = find(item)
+          })
+          this.setNavigation(navItem)
+          console.log('navItem', navItem)
         })
       },
       initTheme() {
@@ -149,6 +160,7 @@
       const fileName = this.$route.params.fileName.split('|').join('/')
       this.setFileName(fileName).then(() => {
         this.initEpub()
+
       })
     }
   }
