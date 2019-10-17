@@ -29,13 +29,16 @@
 <script>
   import { ebookMixin } from '../../utils/mixin.js'
   import EbookSlideContents from './EbookSlideContents'
+  import EbookSlideBookmark from './EbookSlideBookmark'
+
   export default {
     mixins: [ebookMixin],
     data() {
       return {
         currentTab: 1,
-        bookmark: null,
+        bookmark: EbookSlideBookmark,
         content: EbookSlideContents,
+
       }
     },
     methods: {
