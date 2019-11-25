@@ -10,7 +10,7 @@
           v-model="searchText"
           class="slide-contents-search-input"
           @click="showSearchPage"
-          @keyup.enter="search"
+          @keyup.enter.exact="search"
           :placeholder="$t('book.searchHint')">
       </div>
       <div class="slide-contents-search-cancel" v-if="searchVisible" @click="hideSearchPage">{{$t('book.cancel')}}</div>
@@ -56,8 +56,8 @@
       class="slide-search-list">
       <div
         class="slide-search-item"
+        v-html="item.excerpt"
         v-for="(item, index) in searchList" :key="index">
-        {{item.excerpt}}
       </div>
     </scroll>
   </div>
@@ -95,6 +95,15 @@ export default {
       if(this.searchText && this.searchText.length > 0){
         this.doSearch(this.searchText).then(list =>{
           this.searchList = list
+          this.searchList.map(item =>{
+            item.excerpt = item.excerpt.replace(this.searchText,
+              `<span class="content-search-text">
+                ${this.searchText}
+              </span>`
+            )
+            return item
+          })
+          console.log(this.searchList)
         })
       }
     },
@@ -116,12 +125,7 @@ export default {
       this.searchText = ''
       this.searchList = null
     }
-  },
-  mounted () {
-    this.doSearch('add').then(list => {
-      this.searchList = list
-    })
-  },
+  }
 };
 </script>
 
