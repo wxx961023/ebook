@@ -56,7 +56,7 @@
             item.level = find(item)
           })
           this.setNavigation(navItem)
-          console.log('navItem', navItem)
+          // console.log('navItem', navItem)
         })
       },
       initTheme() {

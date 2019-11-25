@@ -1,19 +1,21 @@
 <template>
   <div class="ebook-slide-contents">
-    <div class="slide-contents-search-wrapper">
-      <div class="slide-contents-search-input-wrapper">
+    <div class="slide-contents-search-wrapper" >
+      <div class="slide-contents-search-input-wrapper" >
         <div class="slide-contents-search-icon">
           <span class="icon-search"></span>
         </div>
-        <input  type="text"
-                class="slide-contents-search-input"
-                @click="showSearchPage"
-                :placeholder="$t('book.searchHint')"
-        >
+        <input
+          type="text"
+          v-model="searchText"
+          class="slide-contents-search-input"
+          @click="showSearchPage"
+          @keyup.enter="search"
+          :placeholder="$t('book.searchHint')">
       </div>
       <div class="slide-contents-search-cancel" v-if="searchVisible" @click="hideSearchPage">{{$t('book.cancel')}}</div>
     </div>
-    <div class="slide-contents-book-wrapper">
+    <div class="slide-contents-book-wrapper" v-show="!searchVisible">
       <div class="slide-contents-book-img-wrapper">
         <img class="slide-contents-book-img" :src="cover" >
       </div>
@@ -29,29 +31,96 @@
         <div class="slide-contents-book-time">{{getReadTimeText()}}</div>
       </div>
     </div>
+    <scroll
+      class="slide-contents-list"
+      :top="156"
+      :bottom="48"
+      v-show="!searchVisible">
+      <div class="slide-contents-item"
+        :key="index"
+        v-for="(item, index) in navigation" >
+        <div
+          class="slide-contents-item-label" :style="contentItemStyle(item)"
+          :class="{'selected': section === index}"
+          @click="displayNavigation(item.href)"
+        >
+          {{item.label}}
+        </div>
+        <div class="slide-contents-item-page"></div>
+      </div>
+    </scroll>
+    <scroll
+      :top="66"
+      :bottom="48"
+      v-show="searchVisible"
+      class="slide-search-list">
+      <div
+        class="slide-search-item"
+        v-for="(item, index) in searchList" :key="index">
+        {{item.excerpt}}
+      </div>
+    </scroll>
   </div>
 </template>
 
 <script>
 import { ebookMixin } from '../../utils/mixin.js'
+import Scroll from '../../components/common/Scroll.vue'
+import { px2rem } from '../../utils/utils.js'
 export default {
   mixins: [ebookMixin],
+  components: {
+    Scroll,
+  },
   data() {
     return {
       searchVisible: false,
-
+      searchList: null,
+      searchText: ''
     };
   },
   created() {
-    console.log(this.metadata)
+
   },
   methods: {
+    doSearch(q) {
+      return Promise.all(
+        this.currentBook.spine.spineItems.map(
+          section => section.load(this.currentBook.load.bind(this.currentBook))
+            .then(section.find.bind(section, q))
+            .finally(section.unload.bind(section)))
+      ).then(results => Promise.resolve([].concat.apply([], results)))
+    },
+    search() {
+      if(this.searchText && this.searchText.length > 0){
+        this.doSearch(this.searchText).then(list =>{
+          this.searchList = list
+        })
+      }
+    },
+    displayNavigation(target) {
+      this.display(target, ()=>{
+        this.hideTitleAndMenu()
+      })
+    },
+    contentItemStyle(item) {
+      return {
+        marginLeft: `${px2rem(item.level * 15)}rem`
+      }
+    },
     showSearchPage() {
       this.searchVisible = true;
     },
     hideSearchPage() {
       this.searchVisible = false
+      this.searchText = ''
+      this.searchList = null
     }
+  },
+  mounted () {
+    this.doSearch('add').then(list => {
+      this.searchList = list
+    })
   },
 };
 </script>
@@ -141,6 +210,35 @@ export default {
         font-size: px2rem(12);
         margin-top: px2rem(5);
       }
+    }
+  }
+  .slide-contents-list{
+    padding: 0 px2rem(15);
+    box-sizing: border-box;
+    .slide-contents-item{
+      padding: px2rem(20) 0;
+      display:flex;
+      box-sizing: border-box;
+      .slide-contents-item-label{
+        flex: 1;
+        line-height: px2rem(16);
+        font-size: px2rem(14);
+        @include ellipsis
+      }
+      .slide-contents-item-page{
+
+      }
+    }
+  }
+  .slide-search-list{
+    width: 100%;
+    padding: 0 px2rem(15);
+    box-sizing: border-box;
+    .slide-search-item{
+      font-size: px2rem(14);
+      line-height: px2rem(16);
+      padding: px2rem(20) 0;
+      box-sizing: border-box;
     }
   }
 }
